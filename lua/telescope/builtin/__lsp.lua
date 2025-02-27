@@ -359,11 +359,14 @@ lsp.document_symbols = function(opts)
       return
     end
 
+    local encoding = vim.lsp.get_client_by_id(ctx.client_id).offset_encoding
+    local locations = {}
     if vim.fn.has "nvim-0.11" == 1 then
-      local locations = vim.lsp.util.symbols_to_items(result or {}, opts.bufnr, "utf-8") or {}
+      locations = vim.lsp.util.symbols_to_items(result or {}, opts.bufnr, encoding or "utf-8") or {}
     else
-      local locations = vim.lsp.util.symbols_to_items(result or {}, opts.bufnr) or {}
+      locations = vim.lsp.util.symbols_to_items(result or {}, opts.bufnr) or {}
     end
+
     locations = utils.filter_symbols(locations, opts, symbols_sorter)
     if vim.tbl_isempty(locations) then
       -- error message already printed in `utils.filter_symbols`
